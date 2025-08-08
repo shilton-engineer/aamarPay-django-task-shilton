@@ -3,10 +3,10 @@ import json
 from django.shortcuts import render
 from datetime import datetime
 # Create your views here.
-from .models import PaymentTransaction, FileUpload
-from .serializers import InitiatePaymentSerializer, FileUploadSerializer
+from .models import PaymentTransaction, FileUpload, ActivityLog
+from .serializers import InitiatePaymentSerializer, FileUploadSerializer,FileUploadListSerializer, ActivityLogSerializer, PaymentTransactionSerializer
 from django.utils import timezone
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -148,6 +148,29 @@ class FileUploadView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class FileUploadListView(generics.ListAPIView):
+    serializer_class = FileUploadListSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return FileUpload.objects.filter(user=self.request.user).order_by('-upload_time')
+
+
+class ActivityLogListView(generics.ListAPIView):
+    serializer_class = ActivityLogSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return ActivityLog.objects.filter(user=self.request.user).order_by('-timestamp')
+
+
+class PaymentTransactionListView(generics.ListAPIView):
+    serializer_class = PaymentTransactionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return PaymentTransaction.objects.filter(user=self.request.user).order_by('-timestamp')
 
 
 
