@@ -14,7 +14,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 import requests
 
 #Basic class to check if user is authenticated
-class HelloView(APIView):
+class AuthenticateView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -85,13 +85,17 @@ class PaymentSuccessView(APIView):
     def get(self,request):
 
         user = request.user
+        transaction_id = datetime.now().strftime('%Y%m%d%H%M%S')
 
-        transaction_id = "TXN12345"
+        # transaction_id = request.query_params.get('tran_id')
         amount = 100.00
         status = "success"
         gateway_response = {
             "message": "Payment confirmed by Aamarpay sandbox"
         }
+
+        if not transaction_id:
+            return Response({"error": "Missing transaction ID"}, status=status.HTTP_400_BAD_REQUEST)
 
         PaymentTransaction.objects.create(
             user=user,

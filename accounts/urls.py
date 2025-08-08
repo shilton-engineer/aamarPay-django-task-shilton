@@ -7,7 +7,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path('hello/', views.HelloView.as_view(), name='hello'),
+    path('authenticate/', views.AuthenticateView.as_view(), name='authenticate'),
     path('initiate-payment/', views.InitiatePaymentView.as_view(), name='initiate_payment'),
     path('payment/success/', views.PaymentSuccessView.as_view(), name='payment_success'),
     path('upload/', views.FileUploadView.as_view(), name='file_upload'),
