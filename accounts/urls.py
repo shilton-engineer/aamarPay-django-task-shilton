@@ -14,6 +14,7 @@ urlpatterns = [
     path('files/', FileUploadListView.as_view(), name='file-list'),
     path('activity/', ActivityLogListView.as_view(), name='activity-list'),
     path('transactions/', PaymentTransactionListView.as_view(), name='transaction-list'),
+    path('dashboard/', views.dashboard, name='dashboard'),
 ]
 
 

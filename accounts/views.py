@@ -12,6 +12,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 import requests
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 
 #Basic class to check if user is authenticated
 class AuthenticateView(APIView):
@@ -175,6 +177,29 @@ class PaymentTransactionListView(generics.ListAPIView):
 
     def get_queryset(self):
         return PaymentTransaction.objects.filter(user=self.request.user).order_by('-timestamp')
+
+
+
+@login_required
+def dashboard(request):
+    user = request.user
+
+    has_paid = PaymentTransaction.objects.filter(
+        user=user, status='success'
+    ).exists()
+
+    files=FileUpload.objects.filter(user=user).order_by('-upload_time')
+    activities = ActivityLog.objects.filter(user=user).order_by('-timestamp')[:10]
+    payments = PaymentTransaction.objects.filter(user=user).order_by('timestamp')
+
+    context = {
+        'has_paid':has_paid,
+        'files':files,
+        'activities':activities,
+        'payments':payments
+    }
+
+    return render(request, 'dashboard.html',context)
 
 
 
